@@ -23,6 +23,7 @@ try {
     // Keep native modules and heavy optional deps external
     external: [
       "pg-native",
+      "lightningcss",
       "fsevents",
       "better-sqlite3",
       "oracledb",
@@ -41,3 +42,4 @@ try {
   console.error("Build failed:", err);
   process.exit(1);
 }
+
