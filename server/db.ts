@@ -5,7 +5,11 @@ import * as schema from "@shared/schema";
 const { Pool } = pg;
 
 if (!process.env.DATABASE_URL) {
-  throw new Error("DATABASE_URL is not set");
+  console.error(
+    "Error: DATABASE_URL environment variable is not set.\n" +
+    "Set it in your Hostinger Node.js environment settings before starting the server."
+  );
+  process.exit(1);
 }
 
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });
