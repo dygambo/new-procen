@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Environment variables (never commit real secrets)
+.env
+.env.local
+.env.*.local
+
+# TypeScript incremental build info
+*.tsbuildinfo
+node_modules/typescript/tsbuildinfo
+
+# Database migrations (optional – keep if you want to version them)
+# migrations/
+
+# OS / editor artifacts
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
