@@ -72,16 +72,20 @@ In the Hostinger Node.js settings set:
 - **Entry point / Start file**: `dist/index.cjs`  
   *(the `npm start` command — `NODE_ENV=production node dist/index.cjs` — already does this)*
 
-### 4. Install & build
+### 4. Install dependencies & build
 
 Run these commands via SSH or the Hostinger terminal:
 
 ```bash
-npm install --omit=dev   # install production dependencies
-npm run build            # compile client + server
+npm install          # install all dependencies (dev deps are required for the build)
+npm run build        # compile client + server
 ```
 
-> **Note:** If Hostinger runs `npm install` automatically, it will install all dependencies (including dev). That is fine — esbuild and tsx are needed for the build step.
+After the build completes, dev dependencies are no longer needed at runtime. If you want to reduce disk usage you can prune them:
+
+```bash
+npm prune --omit=dev
+```
 
 ### 5. Run database migrations
 

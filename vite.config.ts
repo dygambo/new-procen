@@ -4,9 +4,7 @@ import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import { metaImagesPlugin } from "./vite-plugin-meta-images";
 
-const isReplit =
-  process.env.NODE_ENV !== "production" &&
-  process.env.REPL_ID !== undefined;
+const isReplit = process.env.REPL_ID !== undefined;
 
 export default defineConfig({
   plugins: [
