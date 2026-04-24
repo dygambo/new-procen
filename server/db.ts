@@ -4,14 +4,10 @@ import * as schema from "@shared/schema";
 
 const { Pool } = pg;
 
-if (!process.env.DATABASE_URL) {
-  console.error(
-    "Error: DATABASE_URL environment variable is not set.\n" +
-    "Set it in your Hostinger Node.js environment settings before starting the server."
-  );
-  process.exit(1);
-}
+export const pool = process.env.DATABASE_URL
+  ? new Pool({ connectionString: process.env.DATABASE_URL })
+  : null;
 
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-
-export const db = drizzle(pool, { schema });
+export const db = process.env.DATABASE_URL 
+  ? drizzle(pool!, { schema }) 
+  : null as any;
