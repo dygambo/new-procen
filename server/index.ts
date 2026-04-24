@@ -1,3 +1,12 @@
+process.on("uncaughtException", (err) => {
+  console.error("Uncaught exception – server will exit:", err);
+  process.exit(1);
+});
+
+process.on("unhandledRejection", (reason) => {
+  console.error("Unhandled rejection:", reason);
+});
+
 import express from "express";
 import session from "express-session";
 import MemoryStore from "memorystore";
