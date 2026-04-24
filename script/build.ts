@@ -1,45 +1,67 @@
-import { build } from "esbuild";
-import { execSync } from "child_process";
-import path from "path";
-import { fileURLToPath } from "url";
+import { build as esbuild } from "esbuild";
+import { build as viteBuild } from "vite";
+import { rm, readFile } from "fs/promises";
 
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const root = path.resolve(__dirname, "..");
+// server deps to bundle to reduce openat(2) syscalls
+// which helps cold start times
+const allowlist = [
+  "@google/generative-ai",
+  "axios",
+  "connect-pg-simple",
+  "cors",
+  "date-fns",
+  "drizzle-orm",
+  "drizzle-zod",
+  "express",
+  "express-rate-limit",
+  "express-session",
+  "jsonwebtoken",
+  "memorystore",
+  "multer",
+  "nanoid",
+  "nodemailer",
+  "openai",
+  "passport",
+  "passport-local",
+  "pg",
+  "stripe",
+  "uuid",
+  "ws",
+  "xlsx",
+  "zod",
+  "zod-validation-error",
+];
 
-try {
-  // 1. Build the React client with Vite
-  console.log("Building client...");
-  execSync("vite build", { stdio: "inherit", cwd: root });
+async function buildAll() {
+  await rm("dist", { recursive: true, force: true });
 
-  // 2. Bundle the Express server with esbuild
-  console.log("Building server...");
-  await build({
-    entryPoints: [path.join(root, "server/index.ts")],
-    bundle: true,
+  console.log("building client...");
+  await viteBuild();
+
+  console.log("building server...");
+  const pkg = JSON.parse(await readFile("package.json", "utf-8"));
+  const allDeps = [
+    ...Object.keys(pkg.dependencies || {}),
+    ...Object.keys(pkg.devDependencies || {}),
+  ];
+  const externals = allDeps.filter((dep) => !allowlist.includes(dep));
+
+  await esbuild({
+    entryPoints: ["server/index.ts"],
     platform: "node",
-    target: "node18",
+    bundle: true,
     format: "cjs",
-    outfile: path.join(root, "dist/index.cjs"),
-    // Keep native modules and heavy optional deps external
-    external: [
-      "pg-native",
-      "lightningcss",
-      "fsevents",
-      "better-sqlite3",
-      "oracledb",
-      "mysql",
-      "mysql2",
-      "tedious",
-      "pg-query-stream",
-    ],
-    banner: {
-      js: "// Built with esbuild for production",
+    outfile: "dist/index.cjs",
+    define: {
+      "process.env.NODE_ENV": '"production"',
     },
+    minify: true,
+    external: externals,
+    logLevel: "info",
   });
-
-  console.log("Build complete. Run `npm start` to launch the server.");
-} catch (err) {
-  console.error("Build failed:", err);
-  process.exit(1);
 }
 
+buildAll().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});

@@ -1,39 +1,44 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Route, Switch } from "wouter";
+import { Switch, Route } from "wouter";
+import { queryClient } from "./lib/queryClient";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { Toaster } from "@/components/ui/toaster";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { ThemeProvider } from "next-themes";
+import NotFound from "@/pages/not-found";
+import Home from "@/pages/home";
+import Template from "@/pages/template";
+import Careers from "@/pages/careers";
+import Solutions from "@/pages/solutions";
+import Services from "@/pages/services";
+import ContactPage from "@/pages/contact";
+import Expertise from "@/pages/expertise";
 
-const queryClient = new QueryClient();
-
-function Home() {
+function Router() {
   return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold">New Procen</h1>
-        <p className="mt-4 text-muted-foreground">
-          Full-stack procurement management application
-        </p>
-      </div>
-    </div>
+    <Switch>
+      <Route path="/" component={Home} />
+      <Route path="/template" component={Template} />
+      <Route path="/careers" component={Careers} />
+      <Route path="/solutions" component={Solutions} />
+      <Route path="/services" component={Services} />
+      <Route path="/contact" component={ContactPage} />
+      <Route path="/expertise/:slug" component={Expertise} />
+      <Route component={NotFound} />
+    </Switch>
   );
 }
 
-function NotFound() {
-  return (
-    <div className="flex min-h-screen items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold">404</h1>
-        <p className="mt-4 text-muted-foreground">Page not found</p>
-      </div>
-    </div>
-  );
-}
-
-export default function App() {
+function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route component={NotFound} />
-      </Switch>
+      <ThemeProvider attribute="class" defaultTheme="dark" forcedTheme="dark">
+        <TooltipProvider>
+          <Toaster />
+          <Router />
+        </TooltipProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
+
+export default App;
