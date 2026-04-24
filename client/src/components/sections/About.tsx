@@ -21,14 +21,16 @@ export function About() {
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[9/14] max-w-md mx-auto lg:mx-0 bg-muted">
               <video
-                src="/automation_video.mov"
                 autoPlay
                 loop
                 muted
                 playsInline
                 disablePictureInPicture
                 className="absolute inset-0 w-full h-full object-cover"
-              />
+              >
+                <source src="/automation_video.mp4" type="video/mp4" />
+                <source src="/automation_video.mov" type="video/quicktime" />
+              </video>
               <div className="absolute inset-0 bg-primary/10 mix-blend-multiply pointer-events-none" />
             </div>
             <div className="absolute -bottom-6 -right-6 w-24 h-24 bg-accent/10 rounded-full blur-2xl z-0" />
